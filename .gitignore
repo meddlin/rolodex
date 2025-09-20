@@ -1,5 +1,8 @@
 *.cpython-313.pyc
 
+# Sqlite DB files
+*.db
+
 # Byte-code files
 *.pyc
 __pycache__/
