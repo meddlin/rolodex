@@ -4,6 +4,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.markdown import Markdown
 from db import init_db, DB_NAME
+from utils import launch_editor_with_text
 
 console = Console()
 
@@ -87,6 +88,31 @@ def edit_person(person_id, **fields):
         conn.commit()
         console.print(f"[cyan]Updated person with ID {person_id}.[/cyan]")
 
+def edit_notes_interactively(person_id):
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute("SELECT full_name, notes FROM people WHERE id = ?", (person_id,))
+        row = c.fetchone()
+
+    if not row:
+        console.print(f"[red]No person found with ID {person_id}[/red]")
+        return
+
+    name, current_notes = row
+    console.print(f"[blue]Editing notes for: {name}[/blue]")
+
+    # Launch the editor
+    updated_notes = launch_editor_with_text(current_notes or "")
+
+    # Save updated notes
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute("UPDATE people SET notes = ? WHERE id = ?", (updated_notes, person_id))
+        conn.commit()
+
+    # Show preview
+    console.print(f"\n[green]Notes updated for {name}.\n")
+
 def main():
     parser = argparse.ArgumentParser(description="Personal CRM CLI")
     subparsers = parser.add_subparsers(dest="command")
@@ -110,6 +136,9 @@ def main():
     # Notes
     notes = subparsers.add_parser("notes", help="View notes (Markdown rendered) by person ID")
     notes.add_argument("id", type=int)
+
+    edit_notes = subparsers.add_parser("edit-notes", help="Edit notes for a person in your default editor")
+    edit_notes.add_argument("id", type=int)
 
     # Delete
     delete = subparsers.add_parser("delete", help="Delete a person by ID")
@@ -138,6 +167,8 @@ def main():
         show_notes(args.id)
     elif args.command == "delete":
         delete_person(args.id)
+    elif args.command == "edit-notes":
+        edit_notes_interactively(args.id)
     elif args.command == "edit":
         edit_person(args.id,
                     full_name=args.full_name,
