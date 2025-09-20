@@ -1,0 +1,27 @@
+*.cpython-313.pyc
+
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
+
+# Test and coverage related files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Miscellaneous
+*.log
