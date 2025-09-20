@@ -5,6 +5,7 @@ from rich.table import Table
 from rich.markdown import Markdown
 from db import init_db, DB_NAME
 from utils import launch_editor_with_text
+from tui_editor import MarkdownEditor
 
 console = Console()
 
@@ -88,30 +89,33 @@ def edit_person(person_id, **fields):
         conn.commit()
         console.print(f"[cyan]Updated person with ID {person_id}.[/cyan]")
 
-def edit_notes_interactively(person_id):
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("SELECT full_name, notes FROM people WHERE id = ?", (person_id,))
-        row = c.fetchone()
+def get_person_by_id(conn, person_id: int):
+    cur = conn.cursor()
+    cur.execute("SELECT id, full_name, notes FROM people WHERE id=?", (person_id,))
+    return cur.fetchone()
 
+
+def update_notes(conn, person_id: int, notes: str):
+    cur = conn.cursor()
+    cur.execute("UPDATE people SET notes=? WHERE id=?", (notes, person_id))
+    conn.commit()
+
+
+def edit_notes(person_id: int):
+    conn = sqlite3.connect(DB_NAME)
+    row = get_person_by_id(conn, person_id)
     if not row:
-        console.print(f"[red]No person found with ID {person_id}[/red]")
+        print(f"No person with ID {person_id}")
         return
+    _id, name, notes = row
+    print(f"Editing notes for {name}... (Ctrl+S to save, Ctrl+Q to quit)")
 
-    name, current_notes = row
-    console.print(f"[blue]Editing notes for: {name}[/blue]")
+    def save_callback(new_text: str):
+        update_notes(conn, person_id, new_text)
+        print(f"Notes saved for {name}!")
 
-    # Launch the editor
-    updated_notes = launch_editor_with_text(current_notes or "")
-
-    # Save updated notes
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("UPDATE people SET notes = ? WHERE id = ?", (updated_notes, person_id))
-        conn.commit()
-
-    # Show preview
-    console.print(f"\n[green]Notes updated for {name}.\n")
+    MarkdownEditor(initial_text=notes or "", on_save=save_callback).run()
+    conn.close()
 
 def main():
     parser = argparse.ArgumentParser(description="Personal CRM CLI")
@@ -137,8 +141,8 @@ def main():
     notes = subparsers.add_parser("notes", help="View notes (Markdown rendered) by person ID")
     notes.add_argument("id", type=int)
 
-    edit_notes = subparsers.add_parser("edit-notes", help="Edit notes for a person in your default editor")
-    edit_notes.add_argument("id", type=int)
+    edit_cmd = subparsers.add_parser("edit-notes", help="Edit notes for a person in your default editor")
+    edit_cmd.add_argument("--id", type=int, required=True)
 
     # Delete
     delete = subparsers.add_parser("delete", help="Delete a person by ID")
@@ -168,7 +172,8 @@ def main():
     elif args.command == "delete":
         delete_person(args.id)
     elif args.command == "edit-notes":
-        edit_notes_interactively(args.id)
+        edit_notes(args.id)
+        # edit_notes_interactively(args.id)
     elif args.command == "edit":
         edit_person(args.id,
                     full_name=args.full_name,
