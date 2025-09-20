@@ -1,6 +1,6 @@
 # Rolodex
 
-A simple CRM for use at-work.
+A simple CRM for use at work.
 
 ![rolodex](./rolodex.png)
 
