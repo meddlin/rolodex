@@ -19,6 +19,12 @@ A simple CRM for use at work.
 
 # Getting Started
 
+Create virtual environment
+
+- `python3 -m venv rolo`
+- `source ./rolo/bin/activate`
+- `pip install -r requirements.txt`
+
 # Testing
 
 Run this to fill the database with test data.
