@@ -1,8 +1,23 @@
 # Rolodex
 
+![License](https://img.shields.io/github/license/meddlin/rolodex)
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)
+
+
 A simple CRM for use at work.
 
+## 🔥 Features
+- ✅ Fast local database with SQLite
+- 📝 Markdown-powered note taking
+- 🔍 Rich search functionality
+- 🎨 Colorful output with Rich
+- 🏷️ Tag people with categories
+
+
 ![rolodex](./rolodex.png)
+
+# Getting Started
 
 # Testing
 
