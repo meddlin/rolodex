@@ -26,7 +26,7 @@ def list_people():
         rows = c.fetchall()
 
     if rows:
-        table = Table(title="People in CRM")
+        table = Table(title="People")
         table.add_column("ID", justify="right")
         table.add_column("Name")
         table.add_column("Title")
@@ -173,7 +173,6 @@ def main():
         delete_person(args.id)
     elif args.command == "edit-notes":
         edit_notes(args.id)
-        # edit_notes_interactively(args.id)
     elif args.command == "edit":
         edit_person(args.id,
                     full_name=args.full_name,
