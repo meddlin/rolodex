@@ -4,6 +4,7 @@ from textual.widgets import TextArea, Markdown, Header, Footer
 
 class MarkdownEditor(App):
     """TUI Markdown editor with live preview for your CRM."""
+
     CSS = """
     Screen { layout: vertical; }
     #body { height: 1fr; }

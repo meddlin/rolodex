@@ -3,21 +3,11 @@ import sqlite3
 from rich.console import Console
 from rich.table import Table
 from rich.markdown import Markdown
-from db import init_db, DB_NAME
-from utils import launch_editor_with_text
-from tui_editor import MarkdownEditor
+from rolodex import init_db, DB_NAME, MarkdownEditor, add_person, search_people
 
 console = Console()
 
-def add_person(full_name, birthday, title, address, notes, tags):
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute('''
-            INSERT INTO people (full_name, birthday, title, address, notes, tags)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (full_name, birthday, title, address, notes, tags))
-        conn.commit()
-        console.print("[green]Person added successfully.[/green]")
+
 
 def list_people():
     with sqlite3.connect(DB_NAME) as conn:
@@ -39,26 +29,6 @@ def list_people():
         console.print(table)
     else:
         console.print("[yellow]No people found.[/yellow]")
-
-def search_people(name_query):
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("SELECT id, full_name, title, birthday, tags FROM people WHERE full_name LIKE ?", (f"%{name_query}%",))
-        rows = c.fetchall()
-
-    if rows:
-        table = Table(title=f"Search Results for '{name_query}'")
-        table.add_column("ID", justify="right")
-        table.add_column("Name")
-        table.add_column("Title")
-        table.add_column("Birthday")
-        table.add_column("Tags")
-
-        for row in rows:
-            table.add_row(str(row[0]), row[1], row[2], row[3], row[4] or "")
-        console.print(table)
-    else:
-        console.print(f"[red]No results found for '{name_query}'.[/red]")
 
 def show_notes(person_id):
     with sqlite3.connect(DB_NAME) as conn:
@@ -139,7 +109,7 @@ def main():
 
     # Notes
     notes = subparsers.add_parser("notes", help="View notes (Markdown rendered) by person ID")
-    notes.add_argument("id", type=int)
+    notes.add_argument("--id", type=int)
 
     edit_cmd = subparsers.add_parser("edit-notes", help="Edit notes for a person in your default editor")
     edit_cmd.add_argument("--id", type=int, required=True)
@@ -159,7 +129,8 @@ def main():
     edit.add_argument("--tags")
 
     args = parser.parse_args()
-    init_db()
+    conn = init_db(DB_NAME)
+    conn.close()
 
     if args.command == "add":
         add_person(args.full_name, args.birthday, args.title, args.address, args.notes, args.tags)

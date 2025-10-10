@@ -1,3 +1,5 @@
+*/*.egg-info/
+
 *.cpython-313.pyc
 
 # Sqlite DB files
