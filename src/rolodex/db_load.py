@@ -2,7 +2,7 @@ import sqlite3
 import random
 import datetime
 from rich.console import Console
-from db import init_db, DB_NAME
+from .database import init_db, DB_NAME
 
 console = Console()
 

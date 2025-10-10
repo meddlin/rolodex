@@ -1,3 +1,14 @@
+## Development
+
+### Running tests
+
+This project uses a src-layout. Install in editable mode, then run pytest:
+
+```bash
+python -m pip install -e .
+pytest
+```
+
 # Rolodex
 
 ![License](https://img.shields.io/github/license/meddlin/rolodex)
