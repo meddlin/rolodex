@@ -105,7 +105,7 @@ def main():
 
     # Search
     search = subparsers.add_parser("search", help="Search people by name")
-    search.add_argument("query")
+    search.add_argument("--query", type=str)
 
     # Notes
     notes = subparsers.add_parser("notes", help="View notes (Markdown rendered) by person ID")
@@ -130,14 +130,13 @@ def main():
 
     args = parser.parse_args()
     conn = init_db(DB_NAME)
-    conn.close()
 
     if args.command == "add":
-        add_person(args.full_name, args.birthday, args.title, args.address, args.notes, args.tags)
+        add_person(conn, args.full_name, args.birthday, args.title, args.address, args.notes, args.tags)
     elif args.command == "list":
         list_people()
     elif args.command == "search":
-        search_people(args.query)
+        search_people(conn, args.query)
     elif args.command == "notes":
         show_notes(args.id)
     elif args.command == "delete":
@@ -154,6 +153,8 @@ def main():
                     tags=args.tags)
     else:
         parser.print_help()
+    
+    conn.close()
 
 if __name__ == "__main__":
     main()
