@@ -1,5 +1,6 @@
 import argparse
 import sqlite3
+import csv
 from rich.console import Console
 from rich.table import Table
 from rich.markdown import Markdown
@@ -87,6 +88,21 @@ def edit_notes(person_id: int):
     MarkdownEditor(initial_text=notes or "", on_save=save_callback).run()
     conn.close()
 
+def export_data(format: str):
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute("SELECT * FROM people")
+        rows = c.fetchall()
+
+    header = ["id", "full_name", "birthday", "title", "address", "notes", "tags"]
+    with open('./db-output.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(header)
+        for row in rows:
+            print(row)
+            writer.writerow([row[0], row[1], row[2], row[3], row[4], row[5], row[6]])
+
+
 def main():
     parser = argparse.ArgumentParser(description="Personal CRM CLI")
     subparsers = parser.add_subparsers(dest="command")
@@ -128,6 +144,10 @@ def main():
     edit.add_argument("--notes")
     edit.add_argument("--tags")
 
+    # Export
+    export = subparsers.add_parser("export", help="Export data from the database")
+    export.add_argument("--format", type=str)
+
     args = parser.parse_args()
     conn = init_db(DB_NAME)
 
@@ -151,6 +171,8 @@ def main():
                     address=args.address,
                     notes=args.notes,
                     tags=args.tags)
+    elif args.command == "export":
+        export_data(args.format)
     else:
         parser.print_help()
     

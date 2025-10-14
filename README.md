@@ -1,14 +1,3 @@
-## Development
-
-### Running tests
-
-This project uses a src-layout. Install in editable mode, then run pytest:
-
-```bash
-python -m pip install -e .
-pytest
-```
-
 # Rolodex
 
 ![License](https://img.shields.io/github/license/meddlin/rolodex)
@@ -41,3 +30,14 @@ Create virtual environment
 Run this to fill the database with test data.
 
 > `python3 db_load.py`
+
+## Development
+
+### Running tests
+
+This project uses a src-layout. Install in editable mode, then run pytest:
+
+```bash
+python -m pip install -e .
+pytest
+```
