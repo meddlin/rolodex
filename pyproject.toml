@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rolodex"
+name = "rolodex-cli"
 version = "0.4.2"
 description = "Simple rolodex DB utilities"
 readme = "README.md"
