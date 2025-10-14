@@ -4,12 +4,25 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rolodex"
-version = "0.1.0"
+version = "0.4.2"
 description = "Simple rolodex DB utilities"
+readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-  "rich>=13",
-]
+license = "MIT"
+authors = [{ name = "Darrien Rushing" }]
+# We declare that deps come from elsewhere:
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+optional-dependencies.dev = { file = ["requirements-dev.txt"] }  # optional
+
+[project.urls]
+Homepage = "https://github.com/meddlin/rolodex"
+
+# creates the `rolodex` shell command
+[project.scripts]
+rolodex = "rolodex.cli:main"
 
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -20,9 +33,11 @@ testpaths = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+include-package-data = false  # keep wheels lean unless you add data files explicitly
 
 [tool.setuptools.packages.find]
 where = ["src"]
+exclude = ["tests*", "docs*"]  # package name patterns (not file globs)
 
 
 

@@ -1,4 +1,7 @@
-*/*.egg-info/
+
+# Distributions
+dist
+dist/*
 
 *.cpython-313.pyc
 
@@ -13,6 +16,9 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Development/Module-related manifests
+*/*.egg-info/
 
 # Editor/IDE specific files
 .vscode/
