@@ -2,6 +2,23 @@
 
 A catch-all for notes related to developing this project.
 
+## Packaging
+
+Remove test venv
+rm -rf /delete-later
+
+Rebuild
+python3 -m pip install --upgrade build twine
+python3 -m build
+
+Upload to TestPyPi
+python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+
+Re-download for test
+
+python3 -m pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple rolodex==0.4.2
+
 ## FAQ
 
 ### When should I run the editable install?
